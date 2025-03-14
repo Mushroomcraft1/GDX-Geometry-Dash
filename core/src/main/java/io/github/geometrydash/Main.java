@@ -97,7 +97,15 @@ public class Main extends ApplicationAdapter {
         draw();
     }
 
+    public void reset() {
+        player = new Player();
+        level = new Stage();
+    }
+
     private void logic() {
+        if (Gdx.input.isKeyPressed(Input.Keys.R) || player.reset) {
+            reset();
+        }
         player.physics(level);
     }
 

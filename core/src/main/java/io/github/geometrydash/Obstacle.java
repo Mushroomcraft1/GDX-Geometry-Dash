@@ -35,7 +35,7 @@ public class Obstacle {
     }
 
     public void draw(Point scroll, ShapeRenderer renderer, ScreenProperties props) {
-        Point translation = new Point(position.x - scroll.x, position.y - scroll.y);
+        Point translation = new Point(- scroll.x, - scroll.y);
         for (Triangle triangle : triangles) {
             triangle.draw(translation, renderer, props);
         }

@@ -20,17 +20,17 @@ public class Stage {
 
 
 
-        obstacles.add(new Obstacle(Obstacles.Platform,  new Point(100, 0), new Scale(20,50)));
-        obstacles.add(new Obstacle(Obstacles.Platform,  new Point(150, 0), new Scale(20,100)));
-        obstacles.add(new Obstacle(Obstacles.Platform,  new Point(200, 0), new Scale(20,150)));
+        obstacles.add(new Obstacle(Obstacles.Platform,  new Point(200, 0), new Scale(40,50)));
+        obstacles.add(new Obstacle(Obstacles.Platform,  new Point(300, 0), new Scale(40,100)));
+        obstacles.add(new Obstacle(Obstacles.Platform,  new Point(400, 0), new Scale(40,150)));
     }
 
 
-    public Triangle colliding(Triangle triangle1) {
+    public Triangle colliding(Triangle triangle1)  {
         for (Obstacle obstacle : obstacles) {
             for (Triangle triangle2 : obstacle.triangles) {
-                if (triangle1.isCollidingWith(triangle2)) {
-                    return triangle2;
+                if (triangle2.isCollidingWith(triangle1)) {
+                    return triangle1;
                 }
             }
         }

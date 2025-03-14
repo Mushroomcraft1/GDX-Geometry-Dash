@@ -1,5 +1,6 @@
 package io.github.geometrydash;
 
+import io.github.geometrydash.Main;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -11,13 +12,20 @@ public class Player {
 
     Triangle[] triangles;
     Point[] points;
+    Behaviour behaviour = Behaviour.Player;
+    Point translation;
+    int deathAnimationTimer = 0;
     float scale = 15;
+    int lastJump = 0;
+    int lastTouchingGround = 0;
+    boolean reset = false;
 
     public Player() {
         float halfSize = scale / 2;
         position = new Point(halfSize, halfSize);
-        force = new Force(0, 0);
-        force.dx = 1;
+        force = new Force(0, Force.gravity);
+        force.dx = 1.3f;
+        translation = new Point(0, 0);
 
         points = new Point[]{
             position.shiftXY(-halfSize, -halfSize),
@@ -37,8 +45,19 @@ public class Player {
 
     public void draw(Stage stage, ShapeRenderer renderer, ScreenProperties props) {
         Point translate = new Point(-stage.scroll.x, 0);
+
+        if (behaviour == Behaviour.Dying) {
+            for (Triangle triangle : triangles) {
+                triangle.ColorOverride = new Color(1, 1, 1, 1 - (float)deathAnimationTimer / 100);
+            }
+        }
+
         for (Triangle triangle : triangles) {
             triangle.draw(translate, renderer, props);
+        }
+
+        if (deathAnimationTimer > 150) {
+            reset = true;
         }
     }
 
@@ -48,6 +67,7 @@ public class Player {
 
         for (Point point : points) {
             point.move(x, y);
+            point.setTranslation(translation);
         }
     }
 
@@ -67,32 +87,39 @@ public class Player {
     }
 
     public void physics(Stage stage) {
+        if (behaviour == Behaviour.Dying) {
+            translation.x -= force.dx;
+            move(force.dx, 0);
+            ++deathAnimationTimer;
+            return;
+        }
+
         boolean jumpKeyPressed = Gdx.input.isTouched() || Gdx.input.isKeyPressed(Input.Keys.SPACE);
 
         force.update();
         move(0, force.dy);
-        boolean isTouchingGround = checkCollisions(stage) == Behaviour.Platform;
+        boolean isTouchingGround = checkCollisions(stage) != Behaviour.None;
 
+        ++lastJump;
         if (isTouchingGround) {
             move(0, -force.dy);
-            force.ay = 0;
-            force.dy = jumpKeyPressed ? Force.jump : 0;
+            force.dy = 0;
+            lastTouchingGround = 0;
         } else {
-            force.ay = Force.gravity;
+            ++lastTouchingGround;
+        }
+
+        boolean canJump = lastJump >= 10 && lastTouchingGround <= 5;
+        if (canJump && jumpKeyPressed) {
+            force.dy = Force.jump;
+            lastJump = 0;
         }
 
         move(force.dx, 0);
         Behaviour collisions = checkCollisions(stage);
-        for (Triangle tri :
-            triangles) {
-            tri.behaviour = Behaviour.Player;
-        }
+
         if (collisions != Behaviour.None) {
-            for (Triangle tri :
-                triangles) {
-                tri.behaviour = Behaviour.Colliding;
-            }
-            move(-force.dx, 0);
+            behaviour = Behaviour.Dying;
         }
     }
 }
