@@ -5,8 +5,8 @@ public class Force {
     public float dy;
     public float ax;
     public float ay;
-    static float gravity = -0.2f;
-    static float jump = 6;
+    static float gravity = -0.17f;
+    static float jump = 5;
 
     public Force(float accelX, float accelY) {
         ax = accelX;

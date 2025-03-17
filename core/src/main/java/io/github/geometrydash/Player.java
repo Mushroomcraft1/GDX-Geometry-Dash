@@ -44,7 +44,7 @@ public class Player {
     }
 
     public void draw(Stage stage, ShapeRenderer renderer, ScreenProperties props) {
-        Point translate = new Point(-stage.scroll.x, 0);
+        Point translate = new Point(translation.x -stage.scroll.x, translation.y);
 
         if (behaviour == Behaviour.Dying) {
             for (Triangle triangle : triangles) {
@@ -67,7 +67,6 @@ public class Player {
 
         for (Point point : points) {
             point.move(x, y);
-            point.setTranslation(translation);
         }
     }
 
@@ -90,6 +89,7 @@ public class Player {
         if (behaviour == Behaviour.Dying) {
             translation.x -= force.dx;
             move(force.dx, 0);
+
             ++deathAnimationTimer;
             return;
         }
@@ -98,7 +98,13 @@ public class Player {
 
         force.update();
         move(0, force.dy);
-        boolean isTouchingGround = checkCollisions(stage) != Behaviour.None;
+
+        Behaviour groundCollisions = checkCollisions(stage);
+        if (groundCollisions == Behaviour.Kill) {
+            behaviour = Behaviour.Dying;
+            return;
+        }
+        boolean isTouchingGround = groundCollisions != Behaviour.None;
 
         ++lastJump;
         if (isTouchingGround) {

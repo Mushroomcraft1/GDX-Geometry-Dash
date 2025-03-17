@@ -8,6 +8,7 @@ public class Triangle {
 
     public Point[] points;
     public Color ColorOverride = null;
+    public float rotation = 0;
 
     public Triangle(Behaviour b, Point[] p) {
         behaviour = b;
@@ -82,6 +83,8 @@ public class Triangle {
         point1.setTranslation(position);
         point2.setTranslation(position);
         point3.setTranslation(position);
+
+
 
         renderer.triangle(point1.screenX(props), point1.screenY(props),
             point2.screenX(props), point2.screenY(props),

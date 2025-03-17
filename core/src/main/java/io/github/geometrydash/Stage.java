@@ -18,13 +18,12 @@ public class Stage {
         scroll = new Point(0, 0);
         obstacles = new ArrayList<>();
 
-
-
         obstacles.add(new Obstacle(Obstacles.Platform,  new Point(200, 0), new Scale(40,50)));
         obstacles.add(new Obstacle(Obstacles.Platform,  new Point(300, 0), new Scale(40,100)));
         obstacles.add(new Obstacle(Obstacles.Platform,  new Point(400, 0), new Scale(40,150)));
+        obstacles.add(new Obstacle(Obstacles.Platform,  new Point(520, 100), new Scale(60,20)));
+        obstacles.add(new Obstacle(Obstacles.Spike,  new Point(440, 0), new Scale(200,20)));
     }
-
 
     public Triangle colliding(Triangle triangle1)  {
         for (Obstacle obstacle : obstacles) {

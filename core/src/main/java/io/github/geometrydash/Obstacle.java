@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class Obstacle {
+    float spikeWidth = 20;
     public Point position;
     public Scale size;
     public Triangle[] triangles;
@@ -28,6 +29,21 @@ public class Obstacle {
                 break;
             }
             case Spike: {
+                int nOfSpikes = (int)(initSize.width / spikeWidth);
+                triangles = new Triangle[nOfSpikes];
+
+                float xPos = initPos.x;
+                for (int i = 0; i < nOfSpikes; ++i) {
+                    Point bottomLeft = new Point(xPos, initPos.y);
+                    Point bottomRight = bottomLeft.shiftX(spikeWidth);
+                    Point top = bottomLeft.shiftXY(spikeWidth / 2, initSize.height);
+
+                    Point[] triPoints = {bottomLeft, bottomRight, top};
+
+                    triangles[i] = new Triangle(Behaviour.Kill, triPoints);
+
+                    xPos += spikeWidth;
+                }
 
                 break;
             }

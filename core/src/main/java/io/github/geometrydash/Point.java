@@ -51,7 +51,7 @@ public class Point {
         return new Point(x, y + sY);
     }
 
-    Point shiftXY(float sX, float sY) {
+    Point shiftXY(float sX , float sY) {
         return new Point(x + sX, y + sY);
     }
 }
