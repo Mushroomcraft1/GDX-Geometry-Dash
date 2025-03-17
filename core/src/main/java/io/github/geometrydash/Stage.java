@@ -28,7 +28,7 @@ public class Stage {
     public Triangle colliding(Triangle triangle1)  {
         for (Obstacle obstacle : obstacles) {
             for (Triangle triangle2 : obstacle.triangles) {
-                if (triangle2.isCollidingWith(triangle1)) {
+                if (triangle1.isCollidingWith(triangle2) || triangle2.isCollidingWith(triangle1)) {
                     return triangle1;
                 }
             }

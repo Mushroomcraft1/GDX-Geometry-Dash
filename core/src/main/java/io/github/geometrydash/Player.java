@@ -40,7 +40,6 @@ public class Player {
             new Triangle(Behaviour.Player, tri1points),
             new Triangle(Behaviour.Player, tri2points)
         };
-
     }
 
     public void draw(Stage stage, ShapeRenderer renderer, ScreenProperties props) {
@@ -94,10 +93,10 @@ public class Player {
             return;
         }
 
-        if (lastTouchingGround > 0) {
-            rotation += 0.2;
+        if (lastTouchingGround > 1) {
+            rotation += 1;
             for (Triangle triangle : triangles) {
-                triangle.rotateBy(0.2f, position);
+                triangle.rotateBy(1f, position);
             }
         }
 
@@ -116,7 +115,7 @@ public class Player {
         ++lastJump;
         if (isTouchingGround) {
             for (Triangle triangle : triangles) {
-//                triangle.rotateBy(-triangle.rotation, position);
+                triangle.rotateBy(-triangle.rotation, position);
             }
 
             move(0, -force.dy);

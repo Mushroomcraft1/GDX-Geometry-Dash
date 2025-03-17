@@ -56,10 +56,10 @@ public class Triangle {
     }
 
     public void rotateBy(float rot, Point rotateAround) {
-        rotation += rot;
+        rotation -= rot;
 
         for (Point point : points) {
-            point.rotate(rotation, rotateAround);
+            point.rotate(-rot, rotateAround);
         }
     }
 
