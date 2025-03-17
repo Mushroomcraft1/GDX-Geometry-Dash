@@ -20,8 +20,7 @@ public class Triangle {
         return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
     }
 
-    private boolean pointInTriangle (Point pt)
-    {
+    private boolean pointInTriangle (Point pt) {
         float d1, d2, d3;
         boolean has_neg, has_pos;
 
@@ -56,6 +55,14 @@ public class Triangle {
         }
     }
 
+    public void rotateBy(float rot, Point rotateAround) {
+        rotation += rot;
+
+        for (Point point : points) {
+            point.rotate(rotation, rotateAround);
+        }
+    }
+
     public void draw(Point position, ShapeRenderer renderer, ScreenProperties props) {
         if (ColorOverride != null) {
             renderer.setColor(ColorOverride);
@@ -84,10 +91,10 @@ public class Triangle {
         point2.setTranslation(position);
         point3.setTranslation(position);
 
-
-
-        renderer.triangle(point1.screenX(props), point1.screenY(props),
+        renderer.triangle(
+            point1.screenX(props), point1.screenY(props),
             point2.screenX(props), point2.screenY(props),
-            point3.screenX(props), point3.screenY(props));
+            point3.screenX(props), point3.screenY(props)
+        );
     }
 }

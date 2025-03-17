@@ -43,6 +43,27 @@ public class Point {
         y += dY;
     }
 
+    void rotate(float rotation, Point rotateAround) {
+        double rad = (double)rotation / 180 * Math.PI;
+
+        double cos = Math.cos(rad);
+        double sin = Math.sin(rad);
+
+        double rotPosX = x - rotateAround.x;
+        double rotPosY = y - rotateAround.y;
+
+        double sinX = rotPosX * sin, cosX = rotPosX * cos;
+        double sinY = rotPosY * sin, cosY = rotPosY * cos;
+
+        x = (float)(cosX - sinY) + rotateAround.x;
+        y = (float)(sinX + cosY) + rotateAround.y;
+    }
+
+    Point copy() {
+        Point copy = new Point(x, y);
+        copy.setTranslation(new Point(tX, tY));
+        return copy;
+    }
     Point shiftX(float sX) {
         return new Point(x + sX, y);
     }

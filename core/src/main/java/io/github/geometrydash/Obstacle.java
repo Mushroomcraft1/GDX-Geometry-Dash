@@ -16,13 +16,13 @@ public class Obstacle {
         switch (type) {
             case Platform: {
                 triangles = new Triangle[2];
-                Point bottomLeft = initPos;
+                Point bottomLeft = initPos.copy();
                 Point bottomRight = initPos.shiftX(initSize.width);
                 Point topLeft = initPos.shiftY(initSize.height);
                 Point topRight = initPos.shiftXY(initSize.width, initSize.height);
 
                 Point[] tri1points = {bottomLeft, bottomRight, topLeft};
-                Point[] tri2points = {topLeft, topRight, bottomRight};
+                Point[] tri2points = {topLeft.copy(), topRight, bottomRight.copy()};
 
                 triangles[0] = new Triangle(Behaviour.Platform, tri1points);
                 triangles[1] = new Triangle(Behaviour.Platform, tri2points);

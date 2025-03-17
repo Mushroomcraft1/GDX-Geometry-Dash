@@ -11,13 +11,14 @@ public class Player {
     public Force force;
 
     Triangle[] triangles;
-    Point[] points;
     Behaviour behaviour = Behaviour.Player;
     Point translation;
     int deathAnimationTimer = 0;
     float scale = 15;
     int lastJump = 0;
     int lastTouchingGround = 0;
+
+    float rotation = 0;
     boolean reset = false;
 
     public Player() {
@@ -27,28 +28,27 @@ public class Player {
         force.dx = 1.3f;
         translation = new Point(0, 0);
 
-        points = new Point[]{
-            position.shiftXY(-halfSize, -halfSize),
-            position.shiftXY(halfSize, -halfSize),
-            position.shiftXY(-halfSize, halfSize),
-            position.shiftXY(halfSize, halfSize)
-        };
+        Point bottomLeft = position.shiftXY(-halfSize, -halfSize);
+        Point bottomRight = position.shiftXY(halfSize, -halfSize);
+        Point topLeft = position.shiftXY(-halfSize, halfSize);
+        Point topRight = position.shiftXY(halfSize, halfSize);
 
-        Point[] tri1points = {points[0], points[1], points[2]};
-        Point[] tri2points = {points[1], points[2], points[3]};
+        Point[] tri1points = {bottomLeft, bottomRight, topLeft};
+        Point[] tri2points = {bottomRight.copy(), topLeft.copy(), topRight};
 
         triangles = new Triangle[]{
             new Triangle(Behaviour.Player, tri1points),
             new Triangle(Behaviour.Player, tri2points)
         };
+
     }
 
     public void draw(Stage stage, ShapeRenderer renderer, ScreenProperties props) {
-        Point translate = new Point(translation.x -stage.scroll.x, translation.y);
+        Point translate = new Point(translation.x - stage.scroll.x, translation.y);
 
         if (behaviour == Behaviour.Dying) {
             for (Triangle triangle : triangles) {
-                triangle.ColorOverride = new Color(1, 1, 1, 1 - (float)deathAnimationTimer / 100);
+                triangle.ColorOverride = new Color(1, 1, 1, 1 - (float) deathAnimationTimer / 100);
             }
         }
 
@@ -65,8 +65,8 @@ public class Player {
         position.x += x;
         position.y += y;
 
-        for (Point point : points) {
-            point.move(x, y);
+        for (Triangle triangle : triangles) {
+            triangle.move(x, y);
         }
     }
 
@@ -94,6 +94,13 @@ public class Player {
             return;
         }
 
+        if (lastTouchingGround > 0) {
+            rotation += 0.2;
+            for (Triangle triangle : triangles) {
+                triangle.rotateBy(0.2f, position);
+            }
+        }
+
         boolean jumpKeyPressed = Gdx.input.isTouched() || Gdx.input.isKeyPressed(Input.Keys.SPACE);
 
         force.update();
@@ -108,6 +115,10 @@ public class Player {
 
         ++lastJump;
         if (isTouchingGround) {
+            for (Triangle triangle : triangles) {
+//                triangle.rotateBy(-triangle.rotation, position);
+            }
+
             move(0, -force.dy);
             force.dy = 0;
             lastTouchingGround = 0;
