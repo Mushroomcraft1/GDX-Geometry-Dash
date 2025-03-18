@@ -13,6 +13,7 @@ public class Player {
     Triangle[] triangles;
     Behaviour behaviour = Behaviour.Player;
     Point translation;
+    Point[] corners;
     int deathAnimationTimer = 0;
     float scale = 15;
     int lastJump = 0;
@@ -35,6 +36,8 @@ public class Player {
 
         Point[] tri1points = {bottomLeft, bottomRight, topLeft};
         Point[] tri2points = {bottomRight.copy(), topLeft.copy(), topRight};
+
+        corners = new Point[]{bottomLeft, topLeft, topRight, bottomRight};
 
         triangles = new Triangle[]{
             new Triangle(Behaviour.Player, tri1points),
@@ -69,6 +72,14 @@ public class Player {
         }
     }
 
+    private void rotate(float deg) {
+        rotation += deg;
+
+        for (Triangle triangle : triangles) {
+            triangle.rotateBy(deg,  position);
+        }
+    }
+
     private Behaviour checkCollisions(Stage stage) {
         for (Triangle triangle : triangles) {
             for (Point point : triangle.points) {
@@ -94,16 +105,21 @@ public class Player {
         }
 
         if (lastTouchingGround > 1) {
-            rotation += 1;
-            for (Triangle triangle : triangles) {
-                triangle.rotateBy(1f, position);
-            }
+            rotate(3.1f);
         }
 
         boolean jumpKeyPressed = Gdx.input.isTouched() || Gdx.input.isKeyPressed(Input.Keys.SPACE);
 
         force.update();
         move(0, force.dy);
+
+        float[] distances = new float[5];
+        distances[4] = stage.raycast(position);
+
+        for (int i = 0; i < 4; ++i) {
+            distances[i] = stage.raycast(corners[i]);
+            System.out.println(i + ": " + distances[i]);
+        }
 
         Behaviour groundCollisions = checkCollisions(stage);
         if (groundCollisions == Behaviour.Kill) {
@@ -114,10 +130,6 @@ public class Player {
 
         ++lastJump;
         if (isTouchingGround) {
-            for (Triangle triangle : triangles) {
-                triangle.rotateBy(-triangle.rotation, position);
-            }
-
             move(0, -force.dy);
             force.dy = 0;
             lastTouchingGround = 0;
@@ -135,7 +147,7 @@ public class Player {
         Behaviour collisions = checkCollisions(stage);
 
         if (collisions != Behaviour.None) {
-            behaviour = Behaviour.Dying;
+//            behaviour = Behaviour.Dying;
         }
     }
 }

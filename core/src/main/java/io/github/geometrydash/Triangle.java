@@ -59,7 +59,7 @@ public class Triangle {
         rotation -= rot;
 
         for (Point point : points) {
-            point.rotate(-rot, rotateAround);
+            point.rotateBy(-rot, rotateAround);
         }
     }
 

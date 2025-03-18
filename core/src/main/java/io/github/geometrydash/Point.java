@@ -43,7 +43,7 @@ public class Point {
         y += dY;
     }
 
-    void rotate(float rotation, Point rotateAround) {
+    void rotateBy(float rotation, Point rotateAround) {
         double rad = (double)rotation / 180 * Math.PI;
 
         double cos = Math.cos(rad);

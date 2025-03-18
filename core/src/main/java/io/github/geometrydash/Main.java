@@ -37,7 +37,7 @@ public class Main extends ApplicationAdapter {
     Stage level;
     Player player;
 
-    int updateRate = 100;
+    int updateRate = 50;
     float fps = 60;
     long prevFrame = 0;
 
