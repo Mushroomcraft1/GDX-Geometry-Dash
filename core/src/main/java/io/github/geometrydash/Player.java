@@ -111,20 +111,38 @@ public class Player {
         boolean jumpKeyPressed = Gdx.input.isTouched() || Gdx.input.isKeyPressed(Input.Keys.SPACE);
 
         force.update();
-        move(0, force.dy);
 
         float[] distances = new float[5];
         distances[4] = stage.raycast(position);
 
         for (int i = 0; i < 4; ++i) {
             distances[i] = stage.raycast(corners[i]);
-            System.out.println(i + ": " + distances[i]);
         }
 
+        int left = 0;
+        int right = 0;
+        int top = 0;
+        int bottom = 0;
+
+        for (int i = 0; i < 4; ++i) {
+            Point point = corners[i];
+            if (point.x < corners[left].x) left = i;
+            if (point.x > corners[right].x) right = i;
+            if (point.y < corners[bottom].y) bottom = i;
+            if (point.y > corners[top].y) top = i;
+        }
+
+
+        move(0, force.dy);
         Behaviour groundCollisions = checkCollisions(stage);
         if (groundCollisions == Behaviour.Kill) {
             behaviour = Behaviour.Dying;
             return;
+        } else {
+            if (distances[bottom] < -0.1f) {
+                move(0, -distances[bottom]);
+//                if (left.y != right.y)
+            }
         }
         boolean isTouchingGround = groundCollisions != Behaviour.None;
 
@@ -147,7 +165,7 @@ public class Player {
         Behaviour collisions = checkCollisions(stage);
 
         if (collisions != Behaviour.None) {
-//            behaviour = Behaviour.Dying;
+            behaviour = Behaviour.Dying;
         }
     }
 }
