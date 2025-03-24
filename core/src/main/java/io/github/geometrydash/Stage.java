@@ -1,8 +1,10 @@
 package io.github.geometrydash;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 
@@ -84,7 +86,7 @@ public class Stage {
         return null;
     }
 
-    public float raycast(Point pointA) {
+    public float raycast(Point pointA, ShapeRenderer renderer, ScreenProperties props) {
         float distance = pointA.y;
         Point pointB = new Point(pointA.x, 0);
 
@@ -112,7 +114,12 @@ public class Stage {
                     Point intersection = getIntersection(line[0], line[1], pointA, pointB);
 
                     if (intersection != null) {
-                        distance = Math.min(distance, pointA.y - intersection.y);
+                        distance = Math.min(distance, intersection.y - pointA.y);
+
+                        if (renderer != null) {
+                            intersection.x -= scroll.x;
+                            renderer.circle(intersection.screenX(props), intersection.screenY(props), 1f);
+                        }
                     }
                 }
             }

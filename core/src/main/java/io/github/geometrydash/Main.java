@@ -111,13 +111,15 @@ public class Main extends ApplicationAdapter {
     }
 
     private void draw() {
-        ScreenUtils.clear(0, 1, 0, 0, true);
+        ScreenUtils.clear(0, 0, 0, 0, true);
         renderer.begin(ShapeRenderer.ShapeType.Filled);
 
         //render
 
         level.draw(player, renderer, properties);
         player.draw(level, renderer, properties);
+
+        renderer.setColor(Color.BLACK);
 
         renderer.end();
 

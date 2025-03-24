@@ -61,6 +61,14 @@ public class Player {
         if (deathAnimationTimer > 150) {
             reset = true;
         }
+
+        renderer.setColor(Color.GREEN);
+
+        stage.raycast(position, renderer, props);
+
+        for (int i = 0; i < 4; ++i) {
+           stage.raycast(corners[i], renderer, props);
+        }
     }
 
     private void move(float x, float y) {
@@ -74,10 +82,19 @@ public class Player {
 
     private void rotate(float deg) {
         rotation += deg;
+        rotation %= 90;
 
         for (Triangle triangle : triangles) {
-            triangle.rotateBy(deg,  position);
+            triangle.rotateBy(deg, position);
         }
+    }
+
+    private void setRotation(float deg) {
+        for (Triangle triangle : triangles) {
+            triangle.rotateBy(deg - rotation, position);
+        }
+
+        rotation = deg % 90;
     }
 
     private Behaviour checkCollisions(Stage stage) {
@@ -111,12 +128,12 @@ public class Player {
         boolean jumpKeyPressed = Gdx.input.isTouched() || Gdx.input.isKeyPressed(Input.Keys.SPACE);
 
         force.update();
+        move(0, force.dy);
 
-        float[] distances = new float[5];
-        distances[4] = stage.raycast(position);
+        float[] distances = new float[4];
 
         for (int i = 0; i < 4; ++i) {
-            distances[i] = stage.raycast(corners[i]);
+            distances[i] = stage.raycast(corners[i], null, null);
         }
 
         int left = 0;
@@ -132,23 +149,28 @@ public class Player {
             if (point.y > corners[top].y) top = i;
         }
 
+        float offset = 0;
+        boolean isTouchingGround = false;
 
-        move(0, force.dy);
-        Behaviour groundCollisions = checkCollisions(stage);
-        if (groundCollisions == Behaviour.Kill) {
-            behaviour = Behaviour.Dying;
-            return;
-        } else {
-            if (distances[bottom] < -0.1f) {
-                move(0, -distances[bottom]);
-//                if (left.y != right.y)
+        for (float distance : distances) {
+            if (distance < 0 && distance < offset) {
+                offset = distance;
+                isTouchingGround = true;
             }
         }
-        boolean isTouchingGround = groundCollisions != Behaviour.None;
+        move(0, -offset);
 
         ++lastJump;
         if (isTouchingGround) {
             move(0, -force.dy);
+
+            if (rotation < 25 || rotation > 65) {
+                setRotation(0);
+//                move(0, -stage.raycast(position, null, null) + scale / 2);
+            } else {
+                rotate(25);
+            }
+
             force.dy = 0;
             lastTouchingGround = 0;
         } else {
@@ -161,11 +183,15 @@ public class Player {
             lastJump = 0;
         }
 
-        move(force.dx, 0);
+        move(force.dx, 0.5f);
         Behaviour collisions = checkCollisions(stage);
 
         if (collisions != Behaviour.None) {
-            behaviour = Behaviour.Dying;
+//            behaviour = Behaviour.Dying;
         }
+
+//        System.out.println(distances[0] + " " + distances[1] + " " + distances[2] + " " + distances[3] + " " + distances[4]);
+
+        move(0, -0.5f);
     }
 }
