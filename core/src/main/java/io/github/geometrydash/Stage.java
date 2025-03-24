@@ -9,23 +9,47 @@ import java.util.ArrayList;
 public class Stage {
     public static int width = 400;
     public static int height = 300;
-    public static float ratio = (float)width / (float)height;
+    public static float ratio = (float) width / (float) height;
 
     Point scroll;
+    private ArrayList<Obstacle> inactive;
+    private int inactiveIdx = 0;
     public ArrayList<Obstacle> obstacles;
 
     public Stage() {
         scroll = new Point(0, 0);
         obstacles = new ArrayList<>();
+        inactive = new ArrayList<>();
 
-        obstacles.add(new Obstacle(Obstacles.Platform,  new Point(200, 0), new Scale(40,50)));
-        obstacles.add(new Obstacle(Obstacles.Platform,  new Point(300, 0), new Scale(40,100)));
-        obstacles.add(new Obstacle(Obstacles.Platform,  new Point(400, 0), new Scale(40,150)));
-        obstacles.add(new Obstacle(Obstacles.Platform,  new Point(520, 100), new Scale(60,20)));
-        obstacles.add(new Obstacle(Obstacles.Spike,  new Point(440, 0), new Scale(200,20)));
+        inactive.add(new Obstacle(Obstacles.Platform, new Point(200, 0), new Scale(40, 50)));
+        inactive.add(new Obstacle(Obstacles.Platform, new Point(300, 0), new Scale(40, 100)));
+        inactive.add(new Obstacle(Obstacles.Platform, new Point(400, 0), new Scale(40, 150)));
+        inactive.add(new Obstacle(Obstacles.Platform, new Point(520, 100), new Scale(60, 20)));
+        inactive.add(new Obstacle(Obstacles.Spike, new Point(440, 0), new Scale(200, 20)));
+        inactive.add(new Obstacle(Obstacles.Platform, new Point(700, 0), new Scale(150, 20)));
+        inactive.add(new Obstacle(Obstacles.Platform, new Point(750, 20), new Scale(100, 20)));
+        inactive.add(new Obstacle(Obstacles.Platform, new Point(800, 40), new Scale(50, 20)));
+        inactive.add(new Obstacle(Obstacles.Spike, new Point(850, 0), new Scale(100, 20)));
+        inactive.add(new Obstacle(Obstacles.Platform, new Point(950, 0), new Scale(150, 20)));
     }
 
-    public Triangle colliding(Triangle triangle1)  {
+    public void update(Player player) {
+        while (inactiveIdx < inactive.size() &&
+            inactive.get(inactiveIdx).position.x < player.position.x + width) {
+            obstacles.add(inactive.get(inactiveIdx));
+            ++inactiveIdx;
+        }
+
+        for (int idx = 0; idx < obstacles.size(); ++idx) {
+            Obstacle obstacle = obstacles.get(idx);
+            if (obstacle.position.x + obstacle.size.width < player.position.x - (float) width / 2) {
+                obstacles.remove(idx);
+                --idx;
+            }
+        }
+    }
+
+    public Triangle colliding(Triangle triangle1) {
         for (Obstacle obstacle : obstacles) {
             for (Triangle triangle2 : obstacle.triangles) {
                 if (triangle1.isCollidingWith(triangle2) || triangle2.isCollidingWith(triangle1)) {
@@ -79,9 +103,9 @@ public class Stage {
 //                if (maxX < pointA.x || minX > pointA.x || minY > pointA.y || maxY < distance) continue;
 
                 Point[][] lines = {
-                    { triangle.points[0], triangle.points[1] },
-                    { triangle.points[1], triangle.points[2] },
-                    { triangle.points[2], triangle.points[0] }
+                    {triangle.points[0], triangle.points[1]},
+                    {triangle.points[1], triangle.points[2]},
+                    {triangle.points[2], triangle.points[0]}
                 };
 
                 for (Point[] line : lines) {
@@ -98,12 +122,12 @@ public class Stage {
     }
 
     public void draw(Player player, ShapeRenderer renderer, ScreenProperties props) {
-        scroll.x = Math.max(0, player.position.x - (float)width / 4);
+        scroll.x = Math.max(0, player.position.x - (float) width / 4);
 
         renderer.setColor(Color.DARK_GRAY);
         renderer.rect(props.offsetX, props.offsetY, props.screenWidth, props.screenHeight);
 
-        for (Obstacle obstacle: obstacles) {
+        for (Obstacle obstacle : obstacles) {
             obstacle.draw(scroll, renderer, props);
         }
     }

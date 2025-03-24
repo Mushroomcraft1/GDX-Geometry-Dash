@@ -107,10 +107,11 @@ public class Main extends ApplicationAdapter {
             reset();
         }
         player.physics(level);
+        level.update(player);
     }
 
     private void draw() {
-        ScreenUtils.clear(0, 0, 0, 0, true);
+        ScreenUtils.clear(0, 1, 0, 0, true);
         renderer.begin(ShapeRenderer.ShapeType.Filled);
 
         //render
