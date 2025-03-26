@@ -64,10 +64,10 @@ public class Player {
 
         renderer.setColor(Color.GREEN);
 
-        stage.raycast(position, renderer, props);
+        stage.raycast(position.shiftY(-1000), position.shiftY(1000), renderer, props);
 
         for (int i = 0; i < 4; ++i) {
-           stage.raycast(corners[i], renderer, props);
+            stage.raycast(corners[i].shiftY(-1000), corners[i].shiftY(1000), renderer, props);
         }
     }
 
@@ -133,7 +133,10 @@ public class Player {
         float[] distances = new float[4];
 
         for (int i = 0; i < 4; ++i) {
-            distances[i] = stage.raycast(corners[i], null, null);
+            Point pointA = new Point(corners[i].x, 0);
+            Point pointB = pointA.shiftY(10_000);
+
+            distances[i] = corners[i].y - stage.raycast(pointA, pointB, null, null);
         }
 
         int left = 0;
@@ -158,17 +161,29 @@ public class Player {
                 isTouchingGround = true;
             }
         }
-        move(0, -offset);
 
         ++lastJump;
         if (isTouchingGround) {
             move(0, -force.dy);
 
-            if (rotation < 25 || rotation > 65) {
+            if (rotation < 15 || rotation > 25) {
                 setRotation(0);
-//                move(0, -stage.raycast(position, null, null) + scale / 2);
+                Point pointA = new Point(position.x, 0);
+                Point pointB = pointA.shiftY(10_000);
+
+                float distToFloor = stage.raycast(pointA, pointB, null, null) - position.y + scale / 2;
+
+
+                if (distToFloor > 0) {
+                    if (distToFloor > 10) {
+                        behaviour = Behaviour.Dying;
+                        return;
+                    }
+
+                    move(0, distToFloor);
+                }
             } else {
-                rotate(25);
+                rotate(10f);
             }
 
             force.dy = 0;
@@ -187,7 +202,7 @@ public class Player {
         Behaviour collisions = checkCollisions(stage);
 
         if (collisions != Behaviour.None) {
-//            behaviour = Behaviour.Dying;
+            behaviour = Behaviour.Dying;
         }
 
 //        System.out.println(distances[0] + " " + distances[1] + " " + distances[2] + " " + distances[3] + " " + distances[4]);

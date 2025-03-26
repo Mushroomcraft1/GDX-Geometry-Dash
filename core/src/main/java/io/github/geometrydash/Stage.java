@@ -86,9 +86,8 @@ public class Stage {
         return null;
     }
 
-    public float raycast(Point pointA, ShapeRenderer renderer, ScreenProperties props) {
-        float distance = pointA.y;
-        Point pointB = new Point(pointA.x, 0);
+    public float raycast(Point pointA, Point pointB, ShapeRenderer renderer, ScreenProperties props) {
+        float distance = 0;
 
         for (Obstacle obstacle : obstacles) {
             for (Triangle triangle : obstacle.triangles) {
@@ -114,7 +113,7 @@ public class Stage {
                     Point intersection = getIntersection(line[0], line[1], pointA, pointB);
 
                     if (intersection != null) {
-                        distance = Math.min(distance, intersection.y - pointA.y);
+                        distance = Math.max(distance, intersection.y);
 
                         if (renderer != null) {
                             intersection.x -= scroll.x;
